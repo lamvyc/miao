@@ -1,35 +1,26 @@
 //让你的用户名(变量名)等于一个对象
 var lamvyc = function () {    //这种写法方便递归调用
     //第一个函数
-    function chunk(array, size = 1) {
-        let newarray = [],
-            temp = 0,
-            len = Math.ceil(array.length / size);
-        if (len == 0 || size < 1) {
-            return [];
+
+    function chunk(array, size) {
+
+        var result = []
+        var index = 0
+        while (index < array.length) {
+            result.push(array.slice(index, index + size))
+            index += size
         }
-        for (let j = 0; j < len; j++) {
-            let temparray = [];
-            for (let i = 0; i < size; i++) {
-                if (array[temp] != undefined) {
-                    temparray.push(array[temp]);
-                    temp++;
-                } else {
-                    break;
-                }
-            }
-            newarray[j] = temparray;
-        }
-        return newarray;
+        return result
     }
-}
+    //第二个函数
+    function compact() {
 
-//第二个函数
-function compact() {
+    }
 
-}
-
-
+    return {
+        chunk: chunk,
+    }
+}()
 
 /*
 var lamvyc = {//这样写不好递归，因为是个匿名函数
