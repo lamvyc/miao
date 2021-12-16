@@ -7,23 +7,27 @@ var lamvyc = function () {
      */
 
     //将ary拆分成size长度的区块，返回拆分后的二维数组
-    function chunk(ary, size = 1) {
-        if (size >= ary.length) {
-            return [ary.slice()]
-        }
+
+    // function fn1(...a) {
+    //     return a
+    // }        输出数组
+    //如fn1(5,6,7)  输出[5,6,7]
+    function chunk(ary, size) {
+        //push每次只能传一个参数
         let res = []
-        let len = ary.length
-        for (let i = 0; i < len; i += size) {
-            let temp = []
-            let end = (i + size) <= len ? i + size : len //end取不到
-            for (let j = i; j < end; j++) {
-                temp.push(ary[j])
+        let l = ary.length
+        let i = 0
+        let g = l - i
+        for (; i <= l; i += size) {
+            if (g >= size) {
+
+                res.push( ary.slice(i, i + size) )
+            } else {
+                res.push( ary.slice(i, l) )       //.slice()输出的结果是一个数组
             }
-            res.push(temp)
         }
         return res
     }
-
 
 
 
@@ -32,6 +36,6 @@ var lamvyc = function () {
 
 
     return {
-        chunk:chunk,
+        chunk: chunk,
     }
 }()
