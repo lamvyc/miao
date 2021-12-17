@@ -22,9 +22,12 @@ var lamvyc = function () {
             if (g >= size) {
 
                 res.push( ary.slice(i, i + size) )
-            } else {
+            } else if (g = 0){
+                break
+            }else{
                 res.push( ary.slice(i, l) )       //.slice()输出的结果是一个数组
             }
+        
         }
         return res
     }
