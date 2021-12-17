@@ -18,7 +18,7 @@ var lamvyc = function () {
         let l = ary.length
         let i = 0
         let g = l - i
-        for (; i <= l; i += size) {
+        for (; i < l; i += size) {
             if (g >= size) {
 
                 res.push( ary.slice(i, i + size) )
