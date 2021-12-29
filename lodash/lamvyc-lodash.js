@@ -75,7 +75,21 @@ var lamvyc = function () {
 
         }
         return res
-    
+
+    }
+
+    //创建一个切片数组，去除array前面的n个元素。（n默认值为1。）
+    function drop(ary, n = 1) {
+        //n - 1 对应数组下标
+        let l = ary.length
+        if (n >= l) {
+            return []
+        } else {
+            for (let i = 0; i < n; i++) {
+                ary.shift()
+            }
+            return ary
+        }
     }
 
 
