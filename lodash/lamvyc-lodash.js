@@ -92,6 +92,16 @@ var lamvyc = function () {
         }
     }
 
+    //减少一级array嵌套深度。
+    //_.flatten([1, [2, [3, [4]], 5]]);
+    // => [1, 2, [3, [4]], 5]
+    //concat(array,value)均拆开最外层[]然后放入到一个空数组中
+
+    function flatten(ary) {
+        let res = _.concat([],...ary)
+        return res
+    }
+
 
 
     //--------------String---------------
