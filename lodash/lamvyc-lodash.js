@@ -112,5 +112,7 @@ var lamvyc = function () {
         chunk: chunk,
         compact: compact,
         difference: difference,
+        drop,
+        flatten,
     }
 }()
