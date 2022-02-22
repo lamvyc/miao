@@ -150,7 +150,7 @@ var lamvyc = function () {
         let right = ary.length - 1
         let temp
         while (left < right) {
-            temp = ary(left)
+            temp = ary[left]
             ary[left] = ary[right]
             ary[right] = temp
             left++
