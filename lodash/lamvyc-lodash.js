@@ -151,8 +151,8 @@ var lamvyc = function () {
         let temp
         while (left < right) {
             temp = ary(left)
-            ary(left) = ary(right)
-            ary(right) = temp
+            ary[left] = ary[right]
+            ary[right] = temp
             left++
             right--
         }
