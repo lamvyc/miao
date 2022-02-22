@@ -206,20 +206,20 @@ var lamvyc = function () {
 
 
     //返回数组的第一个元素，不会改变原数组
-    function head(ary){
-        if(ary){
+    function head(ary) {
+        if (ary) {
             return ary[0]
-        }else{
+        } else {
             return []
         }
     }
 
     //_.pull(array, [values]);改变原数组,移除数组中包含values的值
     //  [1,3,5,7] =>  
-    function pull(ary,...arg){//arg可代表多个参数进行遍历
-        for(let i = 0;i < ary.length;i++){
-            if(arg.includes(ary[i])){
-                ary.splice(i,1)
+    function pull(ary, ...arg) {//arg可代表多个参数进行遍历
+        for (let i = 0; i < ary.length; i++) {
+            if (arg.includes(ary[i])) {
+                ary.splice(i, 1)
                 i--//删除了才需要i--,删除会改变原下标值
             }
         }
@@ -232,12 +232,12 @@ var lamvyc = function () {
         difference: difference,
         drop: drop,
         flatten: flatten,
+        head: head,
         join: join,
+        pull: pull,
         reverse: reverse,
+        forEach: forEach,
         size: size,
-        forEach:forEach,
-        head:head,
-        pull:pull
     }
 }()
 
