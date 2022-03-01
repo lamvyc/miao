@@ -63,6 +63,8 @@ var lamvyc = function () {
     //可以这样_.includes([1],1)
     //也可以这样[1].includes(1)
 
+    //排除其他元素，可以传入多个参数，但第二个及以后的参数必须是数组
+    //不改变原数组
     function difference(ary, ...arg) {
         let res = []
         let mergeOther = [].concat(...arg)//拆分其他数组并合并到一个新的数组
@@ -78,6 +80,64 @@ var lamvyc = function () {
 
     }
 
+    //_.differenceBy([3.1, 2.2, 1.3], [2.5],[3.9] ,Math.floor);
+    //不改变原数组
+    //同上，只是最后一个参数是一个迭代器，迭代器会对所有参数执行运算，然后执行difference
+    /*
+    _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], _.property('x'));
+    _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');//本质上第三个参数传入'x'，它也是个函数
+    _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], it => it.x);
+    let a = [{ 'x': 2 }, { 'x': 1 }] 
+    function(a){
+        return a.map(it => it.x)
+    }
+    */
+    function differenceBys(ary, ...arg) {
+        //1.检查第三个参数，如果是数组直接执行difference()
+        let iteratee0 = arg[arg.length - 1]//arg最后一个参数为迭代器
+        if (Array.isArray(iteratee0)) {
+            return _.difference(ary, ...arg)
+        } else {
+            iteratee0 = _.iteratee(iteratee0)
+            //执行iteratee排除lodash中的一些副作用函数
+            /*
+            1.传 string 是直接返回 path 上的值 <=> _.property
+            2.传 array 是把 path 上的值做比较 <=> _.matchesProperty
+            3.传 object 是去 match 匹配看看你给的 key 和 value 都有没有，可以比你给的多，但是不能少 <=> _.matches
+            4.传 function 返回这个函数
+            */
+        }
+
+        let ary1 = []
+        ary.forEach((n) => {
+            ary1.push(iteratee0(n))
+        })
+
+        let arg2 = []
+        for (let i = 0; i < arg.length - 1; i++) {
+            arg[i].forEach((n) => {
+                arg2.push(iteratee0(n))
+            })
+        }
+
+        let res = []
+        for (let i = 0; i < ary1.length; i++) {
+            if (arg2.includes(ary1[i])) {
+                continue
+            } else {
+                res.push(ary[i])
+            }
+        }
+        return res
+    }
+
+
+    //var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+    //_.differenceWith(objects, [{ 'x': 1, 'y': 2 }],[{ 'x': 2, 'y': 1 }], _.isEqual);
+    //同difference，最后一个参数是比较器，把与比较器相匹配的值给移除出去，
+    function differenceWith() {
+
+    }
     //创建一个切片数组，去除array前面的n个元素。（n默认值为1。）
     function drop(ary, n = 1) {
         //n - 1 对应数组下标
@@ -226,10 +286,94 @@ var lamvyc = function () {
         return ary
     }
 
+    //_.without(array, [values]);不改变原数组，移除数组中包含values的值
+    function without(ary, ...arg) {
+        let res = []
+        ary.forEach(n => {//forEach参数为一个callback函数
+            if (!arg.includes(n)) {
+                res.push(n)
+            }
+        })
+        return res
+    }
+
+    //arr.fill(value[, start[, end]])
+    //value 用来填充数组元素的值。
+    //start(可选) 起始索引，默认值为0。
+    //end(可选) 终止索引，默认值为 this.length。
+    function fill(ary, val, start = 0, end = ary.length) {
+        for (let i = start; i < end; i++) {
+            ary[i] = val
+        }
+        return ary
+    }
+
+    //去除数组中最后一个元素
+    function initial(ary) {
+        if (ary.length < 2) {
+            return []
+        } else {
+            ary.pop()
+            return ary
+        }
+    }
+
+    //_.concat(array, [values])
+    //创建一个新数组，将第一个参数与剩余其他参数连接在一起
+    //连接方式，每个参数都只展开最外一层[],放进创建的新数组中
+    function concat(ary, ...arg) {
+        let res = ary
+        arg.forEach((n) => {//利用forEach遍历剩余参数
+            if (typeof n === 'object') {//判断剩余参数的数据类型
+                res.push(...n)
+            } else {
+                res.push(n)
+            }
+        })
+        return res
+    }
+
+    //返回传入的第一个参数
+    function identity(val) {
+        return val
+    }
+
+    //返回值为函数，
+    /*
+    var users = [
+     { 'user': 'barney' },
+     { 'user': 'fred' }
+    ];
+
+    _.map(users,it => it.user) === _.map(users,_.property('user')) 
+    返回值  ['barney', 'fred']
+    
+    var objects = [
+    { 'a': { 'b': { 'c': 2 } } },
+    { 'a': { 'b': { 'c': 1 } } }
+    ];
+
+    _.map(objects,it => it.a.b.c) === _.map(objects,_.property('a.b.c'))
+    返回值[2,1]
+    */
+    function property(prop) { // 传入一个属性名，返回一个函数, 得到指定属性值的路径函数
+        return function (obj) {
+            return obj[prop] // 获取obj对象的属性值
+        }
+    }
+
+    // function property(prop) {
+    //     return function(obj) {
+    //         return get(obj, prop) //调用get函数获取深层次属性
+    //     }
+    // }
+
     return {
         chunk: chunk,
         compact: compact,
         difference: difference,
+        differenceBy: differenceBy,
+        differenceWith: differenceWith,
         drop: drop,
         flatten: flatten,
         head: head,
@@ -238,6 +382,10 @@ var lamvyc = function () {
         reverse: reverse,
         forEach: forEach,
         size: size,
+        without: without,
+        concat: concat,
+        identity: identity,
+        property: property,
     }
 }()
 
