@@ -1,3 +1,5 @@
+import { dropWhile } from "lodash"
+
 var lamvyc = function () {
 
 
@@ -92,7 +94,7 @@ var lamvyc = function () {
         return a.map(it => it.x)
     }
     */
-    function differenceBys(ary, ...arg) {
+    function differenceBy(ary, ...arg) {
         //1.检查第三个参数，如果是数组直接执行difference()
         let iteratee0 = arg[arg.length - 1]//arg最后一个参数为迭代器
         if (Array.isArray(iteratee0)) {
@@ -135,8 +137,23 @@ var lamvyc = function () {
     //var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
     //_.differenceWith(objects, [{ 'x': 1, 'y': 2 }],[{ 'x': 2, 'y': 1 }], _.isEqual);
     //同difference，最后一个参数是比较器，把与比较器相匹配的值给移除出去，
-    function differenceWith() {
-
+    function differenceWith(ary, ...arg) {
+        let lasts = arg.pop()
+        lasts = _.iteratee(lasts)
+        let res = []
+        let arg2 = [].concat(...arg)
+        for (let i = 0; i < ary.length; i++) {
+            let flag = true
+            for (let item of arg2) {
+                if (!lasts(ary[i], item)) {//arg2的每一项都与ary[第i项]不相等，
+                    flag = false
+                }
+            }
+            if (!flag) {
+                res.push(ary[i])
+            }
+        }
+        return res
     }
     //创建一个切片数组，去除array前面的n个元素。（n默认值为1。）
     function drop(ary, n = 1) {
@@ -152,6 +169,40 @@ var lamvyc = function () {
         }
     }
 
+    //创建一个切片数组，去除array尾部的n个元素。（n默认值为1。）
+    function dropRight(ary, n = 1) {
+        let l = ary.length
+        if (n >= l) {
+            return []
+        } else {
+            for (let i = 0; i < n; i++) {
+                ary.pop()
+            }
+            return ary
+        }
+    }
+
+    //从后向前测，删除通过的元素直至第一个没通过的元素出现
+    function dropRightWhile(ary, predicate = identity) {
+        predicate = iteratee(predicate)
+        for (var i = ary.length - 1; i >= 0; i--) {
+            if (!predicate(ary[i], i, ary)) {
+                break
+            }
+        }
+        return ary.slice(0, i + 1)
+    }
+
+    //前面通过测验的略过，从第一个没有通过测验的开始拿
+    function dropWhile(ary, predicate = identity) {
+        predicate = iteratee(predicate)
+        for (var i = 0; i < ary.length; i++) {
+            if (!predicate(ary[i], i, ary)) {
+                break
+            }
+        }
+        return ary.slice(i) // i [0,length]
+    }
     //减少一级array嵌套深度。
     //_.flatten([1, [2, [3, [4]], 5]]);
     // => [1, 2, [3, [4]], 5]
@@ -375,6 +426,9 @@ var lamvyc = function () {
         differenceBy: differenceBy,
         differenceWith: differenceWith,
         drop: drop,
+        dropRight: dropRight,
+        dropRightWhile: dropRightWhile,
+        dropWhile: dropWhile,
         flatten: flatten,
         head: head,
         join: join,
