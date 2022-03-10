@@ -1,4 +1,4 @@
-import { dropWhile } from "lodash"
+
 
 var lamvyc = function () {
 
@@ -429,7 +429,11 @@ var lamvyc = function () {
         dropRight: dropRight,
         dropRightWhile: dropRightWhile,
         dropWhile: dropWhile,
+        fill:fill,
+        findIndex:findIndex,
+        findLastIndex:findLastIndex,
         flatten: flatten,
+        flattenDeep:flattenDeep,
         head: head,
         join: join,
         pull: pull,
@@ -440,6 +444,7 @@ var lamvyc = function () {
         concat: concat,
         identity: identity,
         property: property,
+        initial:initial,
     }
 }()
 
