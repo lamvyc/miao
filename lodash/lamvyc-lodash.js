@@ -208,6 +208,8 @@ var lamvyc = function () {
     // => [1, 2, [3, [4]], 5]
     //concat(array,value)均拆开最外层[]然后放入到一个空数组中XXX 
     //concat第二个及以后的参数均只拆开最外层放入到要连接的数组中
+    //concat创建一个新数组，将array与任何数组 或 值连接在一起。
+    //concat连接方式，每个参数都只展开最外一层[],放进创建的新数组中
     function flatten(ary) {
         let res = _.concat([], ...ary)
         return res
@@ -228,6 +230,24 @@ var lamvyc = function () {
             }
         })
         return res
+    }
+
+    //_.flattenDepth(array, [depth=1])
+    //[depth=1] (number):最多减少的嵌套层级数。不改变原数组
+    //减少array数组内部的嵌套层级,想减少几层就减少几层，如果depth大于数组的嵌套层级数，相当于flattenDeep完全展平
+    function flattenDepth(array, depth = 1) {
+        if (depth == 0) {
+            return array.slice()
+        }
+        let result = []
+        array.forEach(item => {
+            if (Array.isArray(item)) {
+                result.push(...flattenDepth(item, depth - 1))
+            } else {
+                result.push(item)
+            }
+        })
+        return result
     }
 
     //join功能：1.将传入的数组转换成字符串；2.展开数组，对数组中的数组统统展开；3.第二个参数作为连接符，连接数组中的每一项
@@ -370,7 +390,7 @@ var lamvyc = function () {
     }
 
     //_.concat(array, [values])
-    //创建一个新数组，将第一个参数与剩余其他参数连接在一起
+    //创建一个新数组，将array与任何数组 或 值连接在一起。
     //连接方式，每个参数都只展开最外一层[],放进创建的新数组中
     function concat(ary, ...arg) {
         let res = ary
@@ -419,6 +439,33 @@ var lamvyc = function () {
     //     }
     // }
 
+    //_.fromPairs([['fred', 30,2], ['barney', 40,1]]);
+    //只取元素中数组的前两项作为键值对，返回一个对象
+    function fromPairs(pairs) {
+        let result = {}
+        for (let item of pairs) {
+            result[item[0]] = item[1]
+        }
+        return result
+    }
+
+    //返回 值value在数组中的索引位置, 没有找到为返回-1
+    function indexOf(ary, value, fromIndex = 0) {
+        let i 
+        if(fromIndex >= 0){
+            i = fromIndex
+        }else if(fromIndex <= -ary.length){
+            i = 0
+        }else{
+            i = Math.abs(ary.length + fromIndex)
+        }
+        for (; i < ary.length; i++) {
+            if (ary[i] === value) {
+                return i
+            }
+        }
+        return -1
+    }
     return {
         chunk: chunk,
         compact: compact,
@@ -429,11 +476,12 @@ var lamvyc = function () {
         dropRight: dropRight,
         dropRightWhile: dropRightWhile,
         dropWhile: dropWhile,
-        fill:fill,
-        findIndex:findIndex,
-        findLastIndex:findLastIndex,
+        fill: fill,
+        findIndex: findIndex,
+        findLastIndex: findLastIndex,
         flatten: flatten,
-        flattenDeep:flattenDeep,
+        flattenDeep: flattenDeep,
+        flattenDepth: flattenDepth,
         head: head,
         join: join,
         pull: pull,
@@ -444,9 +492,12 @@ var lamvyc = function () {
         concat: concat,
         identity: identity,
         property: property,
-        initial:initial,
+        initial: initial,
+        fromPairs: fromPairs,
+        indexOf: indexOf,
     }
 }()
+
 
 
 
