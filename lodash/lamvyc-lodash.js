@@ -451,12 +451,12 @@ var lamvyc = function () {
 
     //返回 值value在数组中的索引位置, 没有找到为返回-1
     function indexOf(ary, value, fromIndex = 0) {
-        let i 
-        if(fromIndex >= 0){
+        let i
+        if (fromIndex >= 0) {
             i = fromIndex
-        }else if(fromIndex <= -ary.length){
+        } else if (fromIndex <= -ary.length) {
             i = 0
-        }else{
+        } else {
             i = Math.abs(ary.length + fromIndex)
         }
         for (; i < ary.length; i++) {
@@ -465,6 +465,62 @@ var lamvyc = function () {
             }
         }
         return -1
+    }
+
+    //_.intersection([2, 1], [4, 2], [1, 2]);
+    // => [2]
+    function intersection(...arys) {
+        let ary = arys[0]//随便取出一个数组
+        let values = arys.slice(1)//slice截取剩下的数组
+        let result = []
+        for (let value of values) {//value代表values中的某一数组
+            for (let item of ary) {
+                if (value.includes(item)) {
+                    result.push(item)
+                }
+            }
+        }
+        return result
+    }
+
+    function intersectionBy(...arys) {
+        let predicate = arys[arys.length - 1]
+        let ary = arys[0]
+        let values
+        if (Array.isArray(predicate)) { //没传iteratee
+            predicate = identity
+            values = flattenDeep(arys.slice(1)).map(it => predicate(it))
+        } else {
+            predicate = iteratee(predicate)
+            values = flattenDeep(arys.slice(1, -1)).map(it => predicate(it))
+        }
+
+        let result = []
+        for (let i = 0; i < ary.length; i++) {
+            if (values.includes(predicate(ary[i]))) {
+                result.push(ary[i])
+            }
+        }
+        return result
+    }
+
+    function intersectionWith(ary, ...arrays) {
+        let comparator = arrays[arrays.length - 1]
+        if (Array.isArray(comparator)) {
+            comparator = isEqual
+            arrays = flattenDeep(arrays)
+        } else {
+            comparator = iteratee(comparator)
+            arrays = flattenDeep(arrays.slice(0, -1))
+        }
+        return ary.filter(it => {
+            for (var item of arrays) {
+                if (comparator(it, item)) {
+                    return true
+                }
+            }
+            return false
+        })
     }
     return {
         chunk: chunk,
@@ -495,6 +551,9 @@ var lamvyc = function () {
         initial: initial,
         fromPairs: fromPairs,
         indexOf: indexOf,
+        intersection: intersection,
+        intersectionBy: intersectionBy,
+        intersectionWith: intersectionWith,
     }
 }()
 
